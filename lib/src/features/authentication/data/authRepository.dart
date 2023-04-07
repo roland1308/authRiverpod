@@ -9,10 +9,28 @@ class AuthRepository {
       /// Simulate login request
       await Future.delayed(const Duration(seconds: 3));
       if (name == "Renato") {
-        return User(name: name ?? "NADA");
+        return User(name: name!, token: "FAKE token");
       } else {
         /// Wrong credentials
         throw PersonalException('Credentials not valid');
+      }
+    } catch (e) {
+      throw PersonalException(e);
+    }
+  }
+
+  Future <bool> checkToken(String token) async {
+    try {
+      /// Simulate check request
+      await Future.delayed(const Duration(seconds: 3));
+      print (token);
+      if (token == "FAKE token") {
+        print("CORRECT TOKEN");
+        return true;
+      } else {
+        /// Wrong token
+        print("FALSE TOKEN");
+        return false;
       }
     } catch (e) {
       throw PersonalException(e);

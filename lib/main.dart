@@ -1,28 +1,73 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:login_riverpod_hooks/src/features/authentication/presentation/state_controller.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:login_riverpod_hooks/src/features/authentication/domain/user_model.dart';
+import 'package:login_riverpod_hooks/src/features/authentication/presentation/auth_controller.dart';
+import 'package:login_riverpod_hooks/src/features/home/user_controller.dart';
 import 'package:login_riverpod_hooks/src/features/home/home_page.dart';
 import 'package:login_riverpod_hooks/src/features/authentication/presentation/login_page.dart';
+import 'package:login_riverpod_hooks/src/services/shared_preferences/shared_preferences_controller.dart';
+import 'package:login_riverpod_hooks/src/utils/show_snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final sharedPreferences = await SharedPreferences.getInstance();
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends HookConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userLogged = ref.watch(userProvider);
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        String? data = ref.read(sharedPreferencesProvider).getString("user");
+        String token = "";
+        if ((data ?? "null") != "null") {
+          token = User.fromJson(json.decode(data!)).token;
+        }
+        ref.read(authControllerProvider.notifier).checkToken(token);
+      });
+      return null;
+    }, [ref.watch(userControllerProvider)?.token]);
+
+    final data = ref.watch(authControllerProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.purpleAccent,
         primarySwatch: Colors.purple,
       ),
-      home: userLogged == null
-          ? LoginPage()
-          : const HomePage(),
+      home: data.when(
+        data: (data) {
+          if (data != null) {
+            if (data) {
+              return const HomePage();
+            } else {
+              return LoginPage();
+            }
+          }
+          return const CircularProgressIndicator();
+        },
+        error: (error, _) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showSnackBar(context, error.toString());
+          });
+          return const Text("Login");
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 }

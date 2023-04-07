@@ -1,11 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:login_riverpod_hooks/src/features/authentication/presentation/login_controller.dart';
-import 'package:login_riverpod_hooks/src/features/authentication/presentation/state_controller.dart';
+import 'package:login_riverpod_hooks/src/features/home/user_controller.dart';
 
+import '../../../services/shared_preferences/shared_preferences_controller.dart';
 import '../../../utils/show_snackbar.dart';
-import '../domain/user_model.dart';
 
 class LoginPage extends HookConsumerWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -17,6 +19,7 @@ class LoginPage extends HookConsumerWidget {
     final nameController = useTextEditingController(text: '');
 
     final data = ref.watch(loginScreenControllerProvider);
+
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       body: Form(
@@ -46,9 +49,15 @@ class LoginPage extends HookConsumerWidget {
                 },
                 child: data.when(
                     data: (data) {
+                      if (data != null) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          ref.read(userProvider.notifier).state = data;
+                          ref
+                              .read(sharedPreferencesProvider)
+                              .setString('user', json.encode(data));
+                          ref.read(userControllerProvider.notifier).state =
+                              data;
                         });
+                      }
                       return const Text("Login");
                     },
                     error: (error, _) {
@@ -57,13 +66,7 @@ class LoginPage extends HookConsumerWidget {
                       });
                       return const Text("Login");
                     },
-                    loading: () => const CircularProgressIndicator())
-/*
-              child: data.isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text('Sign in'),
-*/
-                ),
+                    loading: () => const CircularProgressIndicator())),
           ],
         ),
       ),
