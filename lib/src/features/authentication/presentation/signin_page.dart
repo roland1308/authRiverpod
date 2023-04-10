@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:login_riverpod_hooks/src/features/authentication/presentation/login_controller.dart';
+import 'package:login_riverpod_hooks/src/features/authentication/presentation/signin_controller.dart';
 
 import '../../../services/shared_preferences/shared_preferences_controller.dart';
 import '../../../utils/show_snackbar.dart';
@@ -21,7 +21,7 @@ class SigninPage extends HookConsumerWidget {
     final passwordController = useTextEditingController(text: '');
     final password2Controller = useTextEditingController(text: '');
 
-    final data = ref.watch(loginScreenControllerProvider);
+    final signinData = ref.watch(signinControllerProvider);
 
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
@@ -39,7 +39,7 @@ class SigninPage extends HookConsumerWidget {
                 hintText: 'Username',
               ),
               validator: (value) =>
-              (value?.length ?? 0) > 5 ? null : 'Username is too short',
+                  (value?.length ?? 0) > 5 ? null : 'Username is too short',
             ),
             const SizedBox(height: 15),
             TextFormField(
@@ -49,7 +49,7 @@ class SigninPage extends HookConsumerWidget {
                 hintText: 'Password',
               ),
               validator: (value) =>
-              (value ?? "") != "" ? null : 'Passwords is required',
+                  (value ?? "") != "" ? null : 'Passwords is required',
             ),
             const SizedBox(height: 15),
             TextFormField(
@@ -58,19 +58,21 @@ class SigninPage extends HookConsumerWidget {
                 icon: Icon(Icons.lock),
                 hintText: 'Repeat Password',
               ),
-              validator: (value) =>
-              (value ?? "") == passwordController.text ? null : 'Passwords is different',
+              validator: (value) => (value ?? "") == passwordController.text
+                  ? null
+                  : 'Passwords is different',
             ),
             const SizedBox(height: 15),
             ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState!.validate() && !data.isLoading) {
+                  if (_formKey.currentState!.validate() &&
+                      !signinData.isLoading) {
                     ref
-                        .read(loginScreenControllerProvider.notifier)
+                        .read(signinControllerProvider.notifier)
                         .signIn(nameController.text, passwordController.text);
                   }
                 },
-                child: data.when(
+                child: signinData.when(
                     data: (data) {
                       if (data != null) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -92,8 +94,10 @@ class SigninPage extends HookConsumerWidget {
                     loading: () => const CircularProgressIndicator())),
             const SizedBox(height: 15),
             TextButton(
-                onPressed: () => context.go('/'),
-                child: const Text("Already registered? Sign in!"))
+                onPressed: () {
+                  ref.read(isLoginProvider.notifier).state = true;
+                },
+                child: const Text("Already registered? Log in!"))
           ],
         ),
       ),

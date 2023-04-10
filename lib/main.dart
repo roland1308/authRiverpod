@@ -5,9 +5,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:login_riverpod_hooks/src/features/authentication/domain/user_model.dart';
 import 'package:login_riverpod_hooks/src/features/authentication/presentation/auth_controller.dart';
-import 'package:login_riverpod_hooks/src/features/home/user_controller.dart';
-import 'package:login_riverpod_hooks/src/features/home/home_page.dart';
+import 'package:login_riverpod_hooks/src/features/authentication/presentation/login_controller.dart';
 import 'package:login_riverpod_hooks/src/features/authentication/presentation/login_page.dart';
+import 'package:login_riverpod_hooks/src/features/authentication/presentation/signin_page.dart';
+import 'package:login_riverpod_hooks/src/features/home/presentation/home_page.dart';
+import 'package:login_riverpod_hooks/src/features/home/presentation/user_controller.dart';
 import 'package:login_riverpod_hooks/src/services/shared_preferences/shared_preferences_controller.dart';
 import 'package:login_riverpod_hooks/src/utils/show_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +32,7 @@ class MyApp extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         String? data = ref.read(sharedPreferencesProvider).getString("user");
@@ -45,6 +48,8 @@ class MyApp extends HookConsumerWidget {
     }, [ref.watch(userControllerProvider)?.token]);
 
     final data = ref.watch(authControllerProvider);
+    final isLogin = ref.watch(isLoginProvider);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -57,10 +62,12 @@ class MyApp extends HookConsumerWidget {
             if (data) {
               return const HomePage();
             } else {
-              return LoginPage();
+              return isLogin
+              ? LoginPage()
+              : SigninPage();
             }
           }
-          return const CircularProgressIndicator();
+          return null;
         },
         error: (error, _) {
           WidgetsBinding.instance.addPostFrameCallback((_) {

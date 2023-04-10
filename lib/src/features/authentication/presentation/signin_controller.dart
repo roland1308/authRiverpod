@@ -14,10 +14,10 @@ class SigninController extends StateNotifier<AsyncValue<dynamic>> {
   }
 }
 
-final loginScreenControllerProvider =
-StateNotifierProvider.autoDispose<SigninController, AsyncValue<dynamic>>(
+final signinControllerProvider =
+    StateNotifierProvider.autoDispose<SigninController, AsyncValue<dynamic>>(
         (ref) {
-      return SigninController(
-        authRepository: ref.watch(authRepositoryProvider),
-      );
-    });
+  return SigninController(
+    authRepository: ref.watch(authRepositoryProvider),
+  );
+});

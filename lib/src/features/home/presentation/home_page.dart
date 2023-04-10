@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../services/shared_preferences/shared_preferences_controller.dart';
+import '../../../services/shared_preferences/shared_preferences_controller.dart';
 import 'user_controller.dart';
 
 class HomePage extends ConsumerWidget {
