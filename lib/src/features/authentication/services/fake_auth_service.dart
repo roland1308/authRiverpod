@@ -1,15 +1,15 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:login_riverpod_hooks/src/features/authentication/domain/user_model.dart';
-
 import '../../../utils/personal_exception.dart';
+import '../domain/user_model.dart';
+import 'authService.dart';
 
-class AuthRepository {
-  Future<User?> login(String name, String password) async {
+class FakeAuthService extends AuthService{
+  @override
+  Future<User?> login(String email, String password) async {
     try {
       /// Simulate login request
       await Future.delayed(const Duration(seconds: 3));
-      if (name == "Renato" && password == "r") {
-        return User(name: name, token: "FAKE token");
+      if (email == "Renato" && password == "r") {
+        return User(name: email, token: "FAKE token");
       } else {
         /// Wrong credentials
         throw PersonalException('Credentials not valid');
@@ -19,12 +19,13 @@ class AuthRepository {
     }
   }
 
-  Future<User?> signin(String name, String password) async {
+  @override
+  Future<User?> signin(String email, String password) async {
     try {
       /// Simulate register request
       await Future.delayed(const Duration(seconds: 3));
-      if (name == "Renato") {
-        return User(name: name, token: "FAKE token");
+      if (email == "Renato") {
+        return User(name: email, token: "FAKE token");
       } else {
         /// Error registration (f.e. user already exists)
         throw PersonalException('User already registered');
@@ -34,13 +35,12 @@ class AuthRepository {
     }
   }
 
+  @override
   Future<bool> checkToken(String token) async {
     try {
       /// Simulate check request
       await Future.delayed(const Duration(seconds: 3));
-      print(token);
       if (token == "FAKE token") {
-        print("CORRECT TOKEN");
         return true;
       } else {
         /// Wrong token
@@ -51,6 +51,3 @@ class AuthRepository {
     }
   }
 }
-
-final authRepositoryProvider =
-    Provider<AuthRepository>((ref) => AuthRepository());

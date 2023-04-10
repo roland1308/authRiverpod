@@ -1,19 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/authRepository.dart';
+
+import '../services/authService.dart';
 
 class AuthController extends StateNotifier<AsyncValue<dynamic>> {
-  AuthController({required this.authRepository}) : super(const AsyncData(null));
+  AuthController({required this.authService}) : super(const AsyncData(null));
 
-  final AuthRepository authRepository;
+  final AuthService authService;
 
   Future<dynamic> checkToken(String token) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => authRepository.checkToken(token));
+    state = await AsyncValue.guard(() => authService.checkToken(token));
   }
 }
 
 final authControllerProvider =
     StateNotifierProvider.autoDispose<AuthController, AsyncValue<dynamic>>(
         (ref) {
-  return AuthController(authRepository: ref.watch(authRepositoryProvider));
+  return AuthController(authService: ref.watch(authServiceProvider));
 });

@@ -16,7 +16,7 @@ class LoginPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nameController = useTextEditingController(text: '');
+    final emailController = useTextEditingController(text: '');
     final passwordController = useTextEditingController(text: '');
 
     final data = ref.watch(loginControllerProvider);
@@ -31,13 +31,13 @@ class LoginPage extends HookConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
-              controller: nameController,
+              controller: emailController,
               decoration: const InputDecoration(
                 icon: Icon(Icons.person),
-                hintText: 'Username',
+                hintText: 'Email',
               ),
               validator: (value) =>
-                  (value?.length ?? 0) > 5 ? null : 'Username is too short',
+                  (value?.length ?? 0) > 5 ? null : 'Email is too short',
             ),
             const SizedBox(height: 15),
             TextFormField(
@@ -55,7 +55,7 @@ class LoginPage extends HookConsumerWidget {
                   if (_formKey.currentState!.validate() && !data.isLoading) {
                     ref
                         .read(loginControllerProvider.notifier)
-                        .login(nameController.text, passwordController.text);
+                        .login(emailController.text, passwordController.text);
                   }
                 },
                 child: data.when(

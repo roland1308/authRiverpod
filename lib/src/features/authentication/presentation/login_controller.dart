@@ -1,15 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:login_riverpod_hooks/src/features/authentication/data/authRepository.dart';
+
+import '../services/authService.dart';
 
 class LoginController extends StateNotifier<AsyncValue<dynamic>> {
-  LoginController({required this.authRepository})
+  LoginController({required this.authService})
       : super(const AsyncData(null));
 
-  final AuthRepository authRepository;
+  final AuthService authService;
 
-  Future<dynamic> login(String name, String password) async {
+  Future<dynamic> login(String email, String password) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => authRepository.login(name, password));
+    state = await AsyncValue.guard(() => authService.login(email, password));
   }
 }
 
@@ -17,7 +18,7 @@ final loginControllerProvider =
     StateNotifierProvider.autoDispose<LoginController, AsyncValue<dynamic>>(
         (ref) {
   return LoginController(
-    authRepository: ref.watch(authRepositoryProvider),
+    authService: ref.watch(authServiceProvider),
   );
 });
 
