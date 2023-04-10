@@ -29,7 +29,6 @@ class AuthRepository {
         return true;
       } else {
         /// Wrong token
-        print("FALSE TOKEN");
         return false;
       }
     } catch (e) {

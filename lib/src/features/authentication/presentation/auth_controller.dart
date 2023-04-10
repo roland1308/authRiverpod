@@ -1,6 +1,4 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../data/authRepository.dart';
 
 class AuthController extends StateNotifier<AsyncValue<dynamic>> {

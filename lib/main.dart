@@ -35,7 +35,9 @@ class MyApp extends HookConsumerWidget {
         String? data = ref.read(sharedPreferencesProvider).getString("user");
         String token = "";
         if ((data ?? "null") != "null") {
-          token = User.fromJson(json.decode(data!)).token;
+          User storedUser = User.fromJson(json.decode(data!));
+          ref.read(userControllerProvider.notifier).state = storedUser;
+          token = storedUser.token;
         }
         ref.read(authControllerProvider.notifier).checkToken(token);
       });
