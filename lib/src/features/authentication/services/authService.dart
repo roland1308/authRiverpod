@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../boot/domain/user_model.dart';
+import '../../boot/domain/user_model.dart';
 import 'fake_auth_service.dart';
 
 abstract class AuthService {
