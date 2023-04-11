@@ -1,5 +1,5 @@
+import '../../../boot/domain/user_model.dart';
 import '../../../utils/personal_exception.dart';
-import '../domain/user_model.dart';
 import 'authService.dart';
 
 class FakeAuthService extends AuthService{

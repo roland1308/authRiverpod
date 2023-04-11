@@ -5,9 +5,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:login_riverpod_hooks/src/features/authentication/presentation/login_controller.dart';
 
+import '../../../boot/presentation/user_controller.dart';
 import '../../../services/shared_preferences/shared_preferences_controller.dart';
 import '../../../utils/show_snackbar.dart';
-import '../../home/presentation/user_controller.dart';
 
 class LoginPage extends HookConsumerWidget {
   LoginPage({Key? key}) : super(key: key);
